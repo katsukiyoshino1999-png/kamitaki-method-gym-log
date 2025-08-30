@@ -1,37 +1,96 @@
 <!doctype html>
 <html lang="ja">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>上瀧メソッド 地元筋トレ共有アプリ</title>
 <style>
-  :root { --border:#ddd; --muted:#777; --bg:#fafafa; --groupA:#fff; --groupB:#f6f6f6; }
-  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 16px; }
-  header { margin-bottom: 12px; }
-  form, .panel { border: 1px solid var(--border); padding: 12px; border-radius: 10px; margin-bottom: 16px; background: #fff; }
-  label { display:block; margin:8px 0 4px; font-weight:600; }
-  input, select, textarea, button { width:100%; padding:8px; box-sizing:border-box; }
-  table { width:100%; border-collapse: collapse; }
-  th, td { border-bottom: 1px solid #eee; padding: 8px; text-align:left; }
-  .row { display:grid; gap:8px; grid-template-columns: repeat(2,1fr); }
-  @media (max-width:680px){ .row { grid-template-columns:1fr; } }
-  .pill { display:inline-block; padding:4px 10px; border:1px solid #ccc; border-radius:999px; margin:0 6px 6px 0; cursor:pointer; }
-  .pill.active { background:#f2f2f2; }
-  .tabs { display:flex; gap:8px; margin-bottom:8px; }
-  .tabBtn { padding:8px 12px; border:1px solid #ccc; border-radius:8px; cursor:pointer; background:#fff; }
-  .tabBtn.active { background:#f5f5f5; }
-  .groupHeader { padding:6px 8px; font-weight:700; color:#333; border-left:3px solid #888; background:var(--bg); }
-  .groupRowA td { background: var(--groupA); }
-  .groupRowB td { background: var(--groupB); }
-  small.muted { color: var(--muted); }
+  :root {
+    --border:#e5e7eb; --muted:#6b7280; --bg:#f9fafb; --card:#ffffff;
+    --groupA:#ffffff; --groupB:#f6f7fb; --accent:#111827;
+  }
+  * { box-sizing: border-box; }
+  html,body { height:100%; }
+  body {
+    margin:0; background:var(--bg);
+    font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    color:#111;
+  }
+  .container { max-width:960px; margin:0 auto; padding:16px; }
+  header h1 { font-size:20px; margin:0 0 4px; }
+  header small { color:var(--muted); }
+
+  .panel, form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    margin: 12px 0;
+  }
+
+  label { display:block; margin:8px 0 4px; font-weight:600; font-size:14px; }
+  input, select, textarea, button {
+    width:100%; padding:12px 10px; font-size:16px; border-radius:10px; border:1px solid var(--border);
+    min-height:44px;
+  }
+  input[type="date"]{ padding:10px; }
+  textarea { resize: vertical; }
+
+  .row { display:grid; gap:10px; grid-template-columns:1fr 1fr; }
+  @media (max-width:700px){ .row { grid-template-columns:1fr; } }
+
+  .pills {
+    display:flex; gap:8px; overflow:auto; -webkit-overflow-scrolling: touch; padding-bottom:4px;
+  }
+  .pill {
+    flex:0 0 auto; padding:8px 12px; border:1px solid var(--border);
+    border-radius:999px; background:#fff; cursor:pointer; font-size:14px;
+  }
+  .pill.active { background:#eef2ff; border-color:#c7d2fe; }
+
+  /* テーブルはタブレット以上で表示、スマホはカード表示 */
+  table { width:100%; border-collapse: collapse; display:none; }
+  th, td { border-bottom: 1px solid var(--border); padding:10px; text-align:left; font-size:14px; }
+  @media (min-width:700px){ table { display:table; } }
+
+  /* カードリスト（スマホ） */
+  .list { display:grid; gap:8px; }
+  .groupHeader { padding:6px 10px; font-weight:700; color:#374151; border-left:3px solid #9ca3af; background:#eef2f7; border-radius:8px; }
+  .card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:10px; }
+  .cardA { background: var(--groupA); }
+  .cardB { background: var(--groupB); }
+  .row2 { display:flex; gap:8px; flex-wrap:wrap; font-size:13px; color:#374151; }
+  .kv { display:flex; gap:4px; align-items:center; }
+  .kv b { font-weight:700; }
+  .ts { color:var(--muted); font-size:12px; }
+
+  .tabs { display:flex; gap:8px; margin-bottom:8px; overflow:auto; }
+  .tabBtn { flex:0 0 auto; padding:10px 14px; border:1px solid var(--border); background:#fff; border-radius:10px; cursor:pointer; }
+  .tabBtn.active { background:#f3f4f6; }
+
+  /* 送信バー（スマホ固定） */
+  .stickyBar {
+    position: sticky; bottom: env(safe-area-inset-bottom); background: var(--card);
+    padding:12px; border:1px solid var(--border); border-radius:12px; margin-top:10px;
+  }
+  .primary { background:#111827; color:#fff; border-color:#111827; }
+  .subtle { background:#fff; }
+
+  /* PRカード */
+  .prCard { background:#fff; border:1px solid var(--border); border-radius:12px; padding:10px; }
+  .prRow { display:flex; justify-content:space-between; gap:10px; font-size:14px; }
+  .prRow span { display:block; }
+
 </style>
+
 <body>
+<div class="container">
 <header>
   <h1>上瀧メソッド 地元筋トレ共有アプリ</h1>
-  <small class="muted">ログイン不要・URL共有のみ / 1行=1セット</small>
+  <small>ログイン不要・URL共有のみ / 1行=1セット</small>
 </header>
 
 <section class="panel">
-  <h2>新規セットを追加</h2>
+  <h2 style="margin:0 0 8px;font-size:18px;">新規セットを追加</h2>
   <form id="setForm">
     <div class="row">
       <div>
@@ -55,14 +114,19 @@
     </div>
 
     <div id="setRows"></div>
-    <button type="button" id="addRowBtn">+ セット行を追加</button>
-    <button type="submit">登録する（行ごとに保存）</button>
-    <div id="msg" style="margin-top:8px;"></div>
+
+    <div class="stickyBar">
+      <div class="row" style="grid-template-columns: 1fr 1fr;">
+        <button type="button" id="addRowBtn" class="subtle">+ セット行を追加</button>
+        <button type="submit" class="primary">登録する</button>
+      </div>
+      <div id="msg" style="margin-top:6px; font-size:13px; color:#374151;"></div>
+    </div>
   </form>
 </section>
 
 <section class="panel">
-  <h2>一覧＆PR</h2>
+  <h2 style="margin:0 0 8px;font-size:18px;">一覧＆PR</h2>
   <div class="tabs">
     <button type="button" class="tabBtn active" data-tab="tabMember">メンバー別</button>
     <button type="button" class="tabBtn" data-tab="tabExercise">種目別</button>
@@ -71,43 +135,54 @@
 
   <!-- メンバー別 -->
   <div id="tabMember" class="tab">
-    <div id="memberFilter" style="margin:8px 0;"></div>
+    <div class="pills" id="memberFilter"></div>
+
+    <!-- table（タブレット以上） -->
     <table>
       <thead>
         <tr><th>日時</th><th>日付</th><th>メンバー</th><th>種目</th><th>重量</th><th>Reps</th><th>推定1RM</th><th>メモ</th></tr>
       </thead>
       <tbody id="tbodyMember"></tbody>
     </table>
+
+    <!-- cards（スマホ） -->
+    <div class="list" id="cardsMember"></div>
   </div>
 
   <!-- 種目別 -->
   <div id="tabExercise" class="tab" style="display:none;">
-    <div id="exerciseFilter" style="margin:8px 0;"></div>
+    <div class="pills" id="exerciseFilter"></div>
+
     <table>
       <thead>
         <tr><th>日時</th><th>日付</th><th>メンバー</th><th>種目</th><th>重量</th><th>Reps</th><th>推定1RM</th><th>メモ</th></tr>
       </thead>
       <tbody id="tbodyExercise"></tbody>
     </table>
+
+    <div class="list" id="cardsExercise"></div>
   </div>
 
-  <!-- PRボード -->
+  <!-- PR -->
   <div id="tabPR" class="tab" style="display:none;">
     <div class="row">
       <div><label>メンバーで絞込み（任意）</label><select id="prMemberSel"><option value="">全員</option></select></div>
       <div><label>種目で絞込み（任意）</label><select id="prExSel"><option value="">全種目</option></select></div>
     </div>
-    <div style="margin:8px 0;">
-      <small class="muted">※ W×R=重量×回数 / Epley推定1RM = w×(1+reps/30)</small>
-    </div>
+
+    <!-- テーブル（タブレット以上） -->
     <table>
       <thead>
         <tr><th>メンバー</th><th>種目</th><th>最大W×R</th><th>セット</th><th>推定1RM</th><th>セット</th></tr>
       </thead>
       <tbody id="tbodyPR"></tbody>
     </table>
+
+    <!-- カード（スマホ） -->
+    <div class="list" id="cardsPR"></div>
   </div>
 </section>
+</div>
 
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbya-qgt82eq7_E6uUCDT8xwP1xcCw3fkoJ8LzO_KTJWGjK-PLwFVvR5I5WoWhHe9qP7yA/exec';
@@ -157,19 +232,44 @@ function renderPills(containerSel, items, onPick, allLabel){
   const all = mk(allLabel, null); all.classList.add('active'); box.appendChild(all);
   items.forEach(it=> box.appendChild(mk(it, it)));
 }
-function renderGroupedSets(tbodySel, sets){
+
+function toCardHTML(s, flipClass){
+  return `
+    <div class="card ${flipClass}">
+      <div class="ts">${new Date(s.timestamp).toLocaleString()} / ${s.date || ''}</div>
+      <div class="row2" style="margin-top:6px;">
+        <span class="kv"><b>${s.member||''}</b></span>
+        <span class="kv">${s.exercise||''}</span>
+        <span class="kv"><b>${s.weight ?? ''}</b> kg</span>
+        <span class="kv"><b>${s.reps ?? ''}</b> rep</span>
+        <span class="kv">1RM: <b>${s.epley1RM ?? ''}</b></span>
+      </div>
+      ${s.note ? `<div style="margin-top:6px;color:#4b5563;">${s.note}</div>` : ''}
+    </div>
+  `;
+}
+
+/* グルーピング表示：テーブルとカードの両方を描画 */
+function renderGroupedSets(tbodySel, cardsSel, sets){
+  // テーブル
   const tbody = qs(tbodySel); tbody.innerHTML='';
+  // カード
+  const cards = qs(cardsSel); cards.innerHTML='';
+
   let lastKey = null, flip = false;
-  const makeHeader = (label)=>{
+  const addHeader = (label)=>{
+    // テーブル側
     const tr = document.createElement('tr');
     const td = document.createElement('td'); td.colSpan = 8; td.textContent = label; td.className = 'groupHeader';
     tr.appendChild(td); tbody.appendChild(tr);
+    // カード側
+    const h = document.createElement('div'); h.className='groupHeader'; h.textContent = label; cards.appendChild(h);
   };
+
   for (const s of sets){
     const key = `${s.date}｜${s.exercise}`;
-    if (key !== lastKey){ makeHeader(`${s.date} - ${s.exercise}`); flip = !flip; lastKey = key; }
+    if (key !== lastKey){ addHeader(`${s.date} - ${s.exercise}`); flip = !flip; lastKey = key; }
     const tr = document.createElement('tr');
-    tr.className = flip ? 'groupRowA' : 'groupRowB';
     tr.innerHTML = `
       <td>${new Date(s.timestamp).toLocaleString()}</td>
       <td>${s.date||''}</td>
@@ -181,9 +281,13 @@ function renderGroupedSets(tbodySel, sets){
       <td>${(s.note||'')}</td>
     `;
     tbody.appendChild(tr);
+
+    const flipClass = (flip ? 'cardA' : 'cardB');
+    cards.insertAdjacentHTML('beforeend', toCardHTML(s, flipClass));
   }
 }
-function renderPR(rows){
+
+function renderPRTable(rows){
   const tbody = qs('#tbodyPR'); tbody.innerHTML='';
   for (const r of rows){
     const wxrTxt = r.bestWXR ? String(r.bestWXR) : '';
@@ -191,15 +295,26 @@ function renderPR(rows){
     const eplTxt = r.bestEpley ? r.bestEpley.toFixed(1) : '';
     const eplSet = r.bestEpleySet ? `${r.bestEpleySet.weight}kg × ${r.bestEpleySet.reps}rep（${r.bestEpleySet.date}）` : '';
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r.member}</td>
-      <td>${r.exercise}</td>
-      <td>${wxrTxt}</td>
-      <td>${wxrSet}</td>
-      <td>${eplTxt}</td>
-      <td>${eplSet}</td>
-    `;
+    tr.innerHTML = `<td>${r.member}</td><td>${r.exercise}</td><td>${wxrTxt}</td><td>${wxrSet}</td><td>${eplTxt}</td><td>${eplSet}</td>`;
     tbody.appendChild(tr);
+  }
+}
+function renderPRCards(rows){
+  const box = qs('#cardsPR'); box.innerHTML='';
+  for (const r of rows){
+    const wxrTxt = r.bestWXR ? String(r.bestWXR) : '-';
+    const wxrSet = r.bestWXRSet ? `${r.bestWXRSet.weight}kg × ${r.bestWXRSet.reps}rep（${r.bestWXRSet.date}）` : '—';
+    const eplTxt = r.bestEpley ? r.bestEpley.toFixed(1) : '-';
+    const eplSet = r.bestEpleySet ? `${r.bestEpleySet.weight}kg × ${r.bestEpleySet.reps}rep（${r.bestEpleySet.date}）` : '—';
+    box.insertAdjacentHTML('beforeend', `
+      <div class="prCard">
+        <div class="prRow"><span><b>${r.member}</b></span><span>${r.exercise}</span></div>
+        <div class="prRow" style="margin-top:8px;"><span>最大W×R</span><span><b>${wxrTxt}</b></span></div>
+        <div class="ts">${wxrSet}</div>
+        <div class="prRow" style="margin-top:8px;"><span>推定1RM</span><span><b>${eplTxt}</b></span></div>
+        <div class="ts">${eplSet}</div>
+      </div>
+    `);
   }
 }
 
@@ -223,21 +338,21 @@ async function init(){
     const base = await apiGet('sets', m?{member:m}:{});
     const sets = base.sets || [];
     sets.sort((a,b)=> (b.date.localeCompare(a.date) || a.exercise.localeCompare(b.exercise,'ja') || new Date(b.timestamp)-new Date(a.timestamp)));
-    renderGroupedSets('#tbodyMember', sets);
+    renderGroupedSets('#tbodyMember', '#cardsMember', sets);
   }, '全員');
 
   renderPills('#exerciseFilter', exercises, async (ex)=>{
     const base = await apiGet('sets', ex?{exercise:ex}:{});
     const sets = base.sets || [];
     sets.sort((a,b)=> (b.date.localeCompare(a.date) || a.exercise.localeCompare(b.exercise,'ja') || new Date(b.timestamp)-new Date(a.timestamp)));
-    renderGroupedSets('#tbodyExercise', sets);
+    renderGroupedSets('#tbodyExercise', '#cardsExercise', sets);
   }, '全種目');
 
   // 初期表示（全件）
   const all = (await apiGet('sets')).sets || [];
   all.sort((a,b)=> (b.date.localeCompare(a.date) || a.exercise.localeCompare(b.exercise,'ja') || new Date(b.timestamp)-new Date(a.timestamp)));
-  renderGroupedSets('#tbodyMember', all);
-  renderGroupedSets('#tbodyExercise', all);
+  renderGroupedSets('#tbodyMember', '#cardsMember', all);
+  renderGroupedSets('#tbodyExercise', '#cardsExercise', all);
 
   // セット入力 行1つ
   addSetRow();
@@ -260,7 +375,8 @@ async function reloadPR(){
   const m = qs('#prMemberSel').value;
   const e = qs('#prExSel').value;
   const data = await apiGet('prs', {member:m, exercise:e});
-  renderPR(data.prs || []);
+  renderPRTable(data.prs || []);
+  renderPRCards(data.prs || []);
 }
 
 qs('#addRowBtn').onclick = ()=> addSetRow();
@@ -299,11 +415,11 @@ qs('#setForm').addEventListener('submit', async (ev)=>{
 
   const memb = await apiGet('sets', mParam);
   const setM = memb.sets||[]; setM.sort((a,b)=> (b.date.localeCompare(a.date) || a.exercise.localeCompare(b.exercise,'ja') || new Date(b.timestamp)-new Date(a.timestamp)));
-  renderGroupedSets('#tbodyMember', setM);
+  renderGroupedSets('#tbodyMember', '#cardsMember', setM);
 
   const ex = await apiGet('sets', eParam);
   const setE = ex.sets||[]; setE.sort((a,b)=> (b.date.localeCompare(a.date) || a.exercise.localeCompare(b.exercise,'ja') || new Date(b.timestamp)-new Date(a.timestamp)));
-  renderGroupedSets('#tbodyExercise', setE);
+  renderGroupedSets('#tbodyExercise', '#cardsExercise', setE);
 
   // PRボード更新
   await reloadPR();
