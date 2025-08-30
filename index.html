@@ -2,30 +2,22 @@
 <html lang="ja">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>上瀧メソッド 地元筋トレ共有アプリ</title>
+<title>上瀧メソッド 地元筋トレ共有アプリ ~つべこべ言わずベンチプレス~</title>
 <style>
   :root {
     --border:#e5e7eb; --muted:#6b7280; --bg:#f9fafb; --card:#ffffff;
-    --groupA:#ffffff; --groupB:#f6f7fb; --accent:#111827;
+    --groupA:#ffffff; --groupB:#f6f7fb;
   }
   * { box-sizing: border-box; }
   html,body { height:100%; }
-  body {
-    margin:0; background:var(--bg);
-    font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-    color:#111;
-  }
+  body { margin:0; background:var(--bg);
+    font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; color:#111; }
   .container { max-width:960px; margin:0 auto; padding:16px; }
   header h1 { font-size:20px; margin:0 0 4px; }
   header small { color:var(--muted); }
 
-  .panel, form {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 12px;
-    margin: 12px 0;
-  }
+  .panel, form { background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px; margin: 12px 0; }
 
   label { display:block; margin:8px 0 4px; font-weight:600; font-size:14px; }
   input, select, textarea, button {
@@ -38,21 +30,15 @@
   .row { display:grid; gap:10px; grid-template-columns:1fr 1fr; }
   @media (max-width:700px){ .row { grid-template-columns:1fr; } }
 
-  .pills {
-    display:flex; gap:8px; overflow:auto; -webkit-overflow-scrolling: touch; padding-bottom:4px;
-  }
-  .pill {
-    flex:0 0 auto; padding:8px 12px; border:1px solid var(--border);
-    border-radius:999px; background:#fff; cursor:pointer; font-size:14px;
-  }
+  .pills { display:flex; gap:8px; overflow:auto; -webkit-overflow-scrolling: touch; padding-bottom:4px; }
+  .pill { flex:0 0 auto; padding:8px 12px; border:1px solid var(--border);
+    border-radius:999px; background:#fff; cursor:pointer; font-size:14px; }
   .pill.active { background:#eef2ff; border-color:#c7d2fe; }
 
-  /* テーブルはタブレット以上で表示、スマホはカード表示 */
   table { width:100%; border-collapse: collapse; display:none; }
   th, td { border-bottom: 1px solid var(--border); padding:10px; text-align:left; font-size:14px; }
   @media (min-width:700px){ table { display:table; } }
 
-  /* カードリスト（スマホ） */
   .list { display:grid; gap:8px; }
   .groupHeader { padding:6px 10px; font-weight:700; color:#374151; border-left:3px solid #9ca3af; background:#eef2f7; border-radius:8px; }
   .card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:10px; }
@@ -67,26 +53,25 @@
   .tabBtn { flex:0 0 auto; padding:10px 14px; border:1px solid var(--border); background:#fff; border-radius:10px; cursor:pointer; }
   .tabBtn.active { background:#f3f4f6; }
 
-  /* 送信バー（スマホ固定） */
-  .stickyBar {
-    position: sticky; bottom: env(safe-area-inset-bottom); background: var(--card);
-    padding:12px; border:1px solid var(--border); border-radius:12px; margin-top:10px;
-  }
+  .stickyBar { position: sticky; bottom: env(safe-area-inset-bottom); background: var(--card);
+    padding:12px; border:1px solid var(--border); border-radius:12px; margin-top:10px; }
   .primary { background:#111827; color:#fff; border-color:#111827; }
   .subtle { background:#fff; }
 
-  /* PRカード */
-  .prCard { background:#fff; border:1px solid var(--border); border-radius:12px; padding:10px; }
-  .prRow { display:flex; justify-content:space-between; gap:10px; font-size:14px; }
-  .prRow span { display:block; }
-
+  /* --- セット行の見出し＆削除ボタン --- */
+  .setRow { border:1px solid var(--border); border-radius:10px; padding:10px; margin-top:8px; }
+  .setRowHeader { display:flex; align-items:center; justify-content:space-between; }
+  .setBadge { font-weight:700; font-size:14px; padding:4px 8px; border:1px solid var(--border); border-radius:999px; background:#fff; }
+  .delBtn { margin-left:8px; padding:6px 10px; border:1px solid var(--border); border-radius:8px;
+    background:#fff; color:#b91c1c; font-size:14px; min-height:36px; }
+  .delBtn:active { transform: translateY(1px); }
 </style>
 
 <body>
 <div class="container">
 <header>
   <h1>上瀧メソッド 地元筋トレ共有アプリ</h1>
-  <small>ログイン不要・URL共有のみ / 1行=1セット</small>
+  <small>~つべこべ言わずベンチプレス~</small>
 </header>
 
 <section class="panel">
@@ -211,16 +196,50 @@ async function postSetForm(p){
   return res.json();
 }
 
-/* UI helpers */
+/* --- セット行（番号＋削除） --- */
 function addSetRow(weight='', reps=''){
+  const container = qs('#setRows');
   const div = document.createElement('div');
-  div.className = 'row setRow';
+  div.className = 'setRow';
   div.innerHTML = `
-    <div><label>重量(kg)</label><input type="number" step="0.5" class="weight" placeholder="例：100" value="${weight}"></div>
-    <div><label>Reps</label><input type="number" min="1" class="reps" value="${reps}"></div>
+    <div class="setRowHeader">
+      <span class="setBadge">1セット目</span>
+      <button type="button" class="delBtn" aria-label="このセット行を削除">削除</button>
+    </div>
+    <div class="row" style="margin-top:8px;">
+      <div>
+        <label>重量(kg)</label>
+        <input type="number" step="0.5" inputmode="decimal" class="weight" placeholder="例：100" value="${weight}">
+      </div>
+      <div>
+        <label>Reps</label>
+        <input type="number" min="1" inputmode="numeric" class="reps" value="${reps}">
+      </div>
+    </div>
   `;
-  qs('#setRows').appendChild(div);
+  container.appendChild(div);
+  renumberSetRows();
 }
+function renumberSetRows(){
+  const rows = qsa('#setRows .setRow');
+  rows.forEach((row, i)=>{
+    const badge = row.querySelector('.setBadge');
+    if (badge) badge.textContent = `${i+1}セット目`;
+  });
+}
+// 削除（イベント委任）
+qs('#setRows').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.delBtn');
+  if (!btn) return;
+  const row = btn.closest('.setRow');
+  if (row) {
+    row.remove();
+    if (qsa('#setRows .setRow').length === 0) addSetRow(); // 全消し防止
+    renumberSetRows();
+  }
+});
+
+/* 共有UI */
 function renderPills(containerSel, items, onPick, allLabel){
   const box = qs(containerSel); box.innerHTML='';
   const mk = (text, value=null)=>{
@@ -249,20 +268,16 @@ function toCardHTML(s, flipClass){
   `;
 }
 
-/* グルーピング表示：テーブルとカードの両方を描画 */
+/* グルーピング表示：テーブルとカード両方 */
 function renderGroupedSets(tbodySel, cardsSel, sets){
-  // テーブル
   const tbody = qs(tbodySel); tbody.innerHTML='';
-  // カード
   const cards = qs(cardsSel); cards.innerHTML='';
-
   let lastKey = null, flip = false;
+
   const addHeader = (label)=>{
-    // テーブル側
     const tr = document.createElement('tr');
     const td = document.createElement('td'); td.colSpan = 8; td.textContent = label; td.className = 'groupHeader';
     tr.appendChild(td); tbody.appendChild(tr);
-    // カード側
     const h = document.createElement('div'); h.className='groupHeader'; h.textContent = label; cards.appendChild(h);
   };
 
@@ -281,7 +296,6 @@ function renderGroupedSets(tbodySel, cardsSel, sets){
       <td>${(s.note||'')}</td>
     `;
     tbody.appendChild(tr);
-
     const flipClass = (flip ? 'cardA' : 'cardB');
     cards.insertAdjacentHTML('beforeend', toCardHTML(s, flipClass));
   }
@@ -307,11 +321,13 @@ function renderPRCards(rows){
     const eplTxt = r.bestEpley ? r.bestEpley.toFixed(1) : '-';
     const eplSet = r.bestEpleySet ? `${r.bestEpleySet.weight}kg × ${r.bestEpleySet.reps}rep（${r.bestEpleySet.date}）` : '—';
     box.insertAdjacentHTML('beforeend', `
-      <div class="prCard">
-        <div class="prRow"><span><b>${r.member}</b></span><span>${r.exercise}</span></div>
-        <div class="prRow" style="margin-top:8px;"><span>最大W×R</span><span><b>${wxrTxt}</b></span></div>
+      <div class="card">
+        <div class="row2" style="justify-content:space-between;">
+          <span><b>${r.member}</b></span><span>${r.exercise}</span>
+        </div>
+        <div class="row2" style="margin-top:6px;"><span>最大W×R</span><span><b>${wxrTxt}</b></span></div>
         <div class="ts">${wxrSet}</div>
-        <div class="prRow" style="margin-top:8px;"><span>推定1RM</span><span><b>${eplTxt}</b></span></div>
+        <div class="row2" style="margin-top:6px;"><span>推定1RM</span><span><b>${eplTxt}</b></span></div>
         <div class="ts">${eplSet}</div>
       </div>
     `);
@@ -325,15 +341,12 @@ async function init(){
   const members = (await apiGet('members')).members || [];
   const exercises = (await apiGet('exercises')).exercises || [];
 
-  // 入力セレクト
   const ms = qs('#memberSelect'); members.forEach(m=>{ const o=document.createElement('option'); o.value=o.textContent=m; ms.appendChild(o); });
   const es = qs('#exerciseSelect'); exercises.forEach(e=>{ const o=document.createElement('option'); o.value=o.textContent=e; es.appendChild(o); });
 
-  // PR 絞り込みセレクト
   const prMSel = qs('#prMemberSel'); members.forEach(m=>{ const o=document.createElement('option'); o.value=m; o.textContent=m; prMSel.appendChild(o); });
   const prESel = qs('#prExSel'); exercises.forEach(e=>{ const o=document.createElement('option'); o.value=e; o.textContent=e; prESel.appendChild(o); });
 
-  // フィルタ pills
   renderPills('#memberFilter', members, async (m)=>{
     const base = await apiGet('sets', m?{member:m}:{});
     const sets = base.sets || [];
@@ -348,16 +361,13 @@ async function init(){
     renderGroupedSets('#tbodyExercise', '#cardsExercise', sets);
   }, '全種目');
 
-  // 初期表示（全件）
   const all = (await apiGet('sets')).sets || [];
   all.sort((a,b)=> (b.date.localeCompare(a.date) || a.exercise.localeCompare(b.exercise,'ja') || new Date(b.timestamp)-new Date(a.timestamp)));
   renderGroupedSets('#tbodyMember', '#cardsMember', all);
   renderGroupedSets('#tbodyExercise', '#cardsExercise', all);
 
-  // セット入力 行1つ
-  addSetRow();
+  addSetRow(); // 最初の1行
 
-  // タブ切替
   qsa('.tabBtn').forEach(btn=>{
     btn.onclick = ()=>{
       qsa('.tabBtn').forEach(b=>b.classList.remove('active'));
@@ -367,10 +377,8 @@ async function init(){
     };
   });
 
-  // PR 初期表示
   await reloadPR();
 }
-
 async function reloadPR(){
   const m = qs('#prMemberSel').value;
   const e = qs('#prExSel').value;
@@ -404,10 +412,8 @@ qs('#setForm').addEventListener('submit', async (ev)=>{
   }
   qs('#msg').textContent = '登録しました！';
 
-  // 入力リセット（1行残す）
   qs('#setRows').innerHTML=''; addSetRow();
 
-  // 一覧を再読込（現在のフィルタに合わせる）
   const actMember = qs('#memberFilter .pill.active')?.textContent;
   const actEx     = qs('#exerciseFilter .pill.active')?.textContent;
   const mParam = (actMember && actMember!=='全員') ? {member:actMember} : {};
@@ -421,7 +427,6 @@ qs('#setForm').addEventListener('submit', async (ev)=>{
   const setE = ex.sets||[]; setE.sort((a,b)=> (b.date.localeCompare(a.date) || a.exercise.localeCompare(b.exercise,'ja') || new Date(b.timestamp)-new Date(a.timestamp)));
   renderGroupedSets('#tbodyExercise', '#cardsExercise', setE);
 
-  // PRボード更新
   await reloadPR();
 });
 
